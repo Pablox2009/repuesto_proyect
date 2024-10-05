@@ -5,17 +5,28 @@
  */
 package repuesto_controler;
 
+import codigo.proCode;
+import java.util.Map;
+import javax.swing.JComboBox;
+import modelo.proModel;
+
 /**
  *
  * @author coron
  */
 public class Pro extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Pro
-     */
+    proCode pc = new proCode();
+    proModel pm = new proModel();
     public Pro() {
         initComponents();
+        pc.marcas(marca_combo);
+        marca_combo.addActionListener((actionEvt) -> {
+            JComboBox comboBox = (JComboBox) actionEvt.getSource();
+            Map<String, Integer> mapMarca = (Map<String, Integer>) comboBox.getClientProperty("mapMarca");
+            String marca = (String) comboBox.getSelectedItem();
+            pm.setId_marca(mapMarca.get(marca));
+        });
     }
 
     /**
@@ -36,10 +47,10 @@ public class Pro extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         añadir_marca = new javax.swing.JButton();
         añadir_foto = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        marca_combo = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -72,7 +83,7 @@ public class Pro extends javax.swing.JFrame {
 
         añadir_foto.setText("Añadir");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        marca_combo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton1.setText("subir");
 
@@ -102,7 +113,7 @@ public class Pro extends javax.swing.JFrame {
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, 0, 148, Short.MAX_VALUE)
+                        .addComponent(marca_combo, 0, 148, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(añadir_marca)))
                 .addGap(59, 59, 59))
@@ -122,20 +133,17 @@ public class Pro extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(añadir_marca)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(marca_combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel5))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(foto, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(añadir_foto))))
+                    .addComponent(jLabel5)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(foto, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(añadir_foto)))
                 .addGap(52, 52, 52)
                 .addComponent(jButton1)
                 .addContainerGap(32, Short.MAX_VALUE))
@@ -199,12 +207,12 @@ public class Pro extends javax.swing.JFrame {
     private javax.swing.JButton añadir_marca;
     private javax.swing.JLabel foto;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JComboBox<String> marca_combo;
     // End of variables declaration//GEN-END:variables
 }
