@@ -6,27 +6,52 @@
 package repuesto_controler;
 
 import codigo.proCode;
+import java.awt.Image;
+import java.io.File;
 import java.util.Map;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import modelo.proModel;
-
+import Conexion.conexion;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 /**
  *
  * @author coron
  */
 public class Pro extends javax.swing.JFrame {
-
+     private byte[] imagenBytes;
+    conexion a = new conexion();
+     Connection conect;
+    
     proCode pc = new proCode();
     proModel pm = new proModel();
+    private String rutaImagenSeleccionada;
     public Pro() {
+        this.conect = a.conectar();
         initComponents();
-        pc.marcas(marca_combo);
+       
+
+      /*  pc.marcas(marca_combo);
         marca_combo.addActionListener((actionEvt) -> {
             JComboBox comboBox = (JComboBox) actionEvt.getSource();
             Map<String, Integer> mapMarca = (Map<String, Integer>) comboBox.getClientProperty("mapMarca");
             String marca = (String) comboBox.getSelectedItem();
             pm.setId_marca(mapMarca.get(marca));
-        });
+        });*/
     }
 
     /**
@@ -38,8 +63,8 @@ public class Pro extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        productos = new javax.swing.JTextField();
+        precio = new javax.swing.JTextField();
         foto = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -52,19 +77,20 @@ public class Pro extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        productos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                productosActionPerformed(evt);
             }
         });
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        precio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                precioActionPerformed(evt);
             }
         });
 
-        foto.setText("jLabel1");
+        foto.setBackground(new java.awt.Color(153, 0, 153));
+        foto.setText("           No selecciono una foto");
 
         jLabel2.setText("Producto:");
 
@@ -82,10 +108,18 @@ public class Pro extends javax.swing.JFrame {
         });
 
         añadir_foto.setText("Añadir");
-
-        marca_combo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        añadir_foto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                añadir_fotoActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("subir");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -102,24 +136,27 @@ public class Pro extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField1)
-                            .addComponent(jTextField2)
-                            .addComponent(foto, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(productos, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                                    .addComponent(precio))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(foto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(añadir_foto))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(marca_combo, 0, 148, Short.MAX_VALUE)
+                        .addComponent(marca_combo, 0, 237, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(añadir_marca)))
                 .addGap(59, 59, 59))
             .addGroup(layout.createSequentialGroup()
-                .addGap(137, 137, 137)
-                .addComponent(jButton1)
+                .addGap(203, 203, 203)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -127,7 +164,7 @@ public class Pro extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(76, 76, 76)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -136,36 +173,194 @@ public class Pro extends javax.swing.JFrame {
                     .addComponent(marca_combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(precio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(foto, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(añadir_foto)))
-                .addGap(52, 52, 52)
+                    .addComponent(añadir_foto)
+                    .addComponent(foto, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addGap(42, 42, 42))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void precioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_precioActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void productosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productosActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+        
+    }//GEN-LAST:event_productosActionPerformed
 
+   
     private void añadir_marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_marcaActionPerformed
         // TODO add your handling code here:
         Marca a= new Marca();
         a.setVisible(true);
         dispose();
     }//GEN-LAST:event_añadir_marcaActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+      // Obtener los datos de los JTextField
+    String nombreProducto = productos.getText().trim(); // Usar trim() para eliminar espacios en blanco
+    String precioProducto = precio.getText().trim();
+    System.out.println("Nombre del Producto: '" + nombreProducto + "'");
+    System.out.println("Precio del Producto: '" + precioProducto + "'");
+
+    // Verificar si los campos están vacíos
+    if (nombreProducto.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Por favor, complete el campo Nombre del producto.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    if (precioProducto.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Por favor, complete el campo Precio.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    if (imagenBytes == null) {
+    JOptionPane.showMessageDialog(null, "Por favor, seleccione una imagen para el producto.", "Error", JOptionPane.ERROR_MESSAGE);
+    return;
+}
+
+    try {
+   
+    if (conect != null) {
+        String sql = "INSERT INTO productos (nombre_producto, precio, foto) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ps.setString(1, nombreProducto);
+            ps.setBigDecimal(2, new BigDecimal(precioProducto)); 
+            if (imagenBytes != null) {
+                ps.setBytes(3, imagenBytes); // Establecer la imagen
+            } else {
+                ps.setNull(3, java.sql.Types.BLOB); // Establecer NULL si no hay imagen
+            }
+
+            // Ejecutar la consulta
+            int rowsInserted = ps.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("¡Un nuevo producto fue insertado exitosamente!");
+            }
+        }
+    } else {
+        System.out.println("Error: La conexión a la base de datos no está establecida.");
+    }
+} catch (SQLException e) {
+    e.printStackTrace();
+} catch (NumberFormatException e) {
+    System.out.println("Error: El precio debe ser un número válido.");
+}
+    
+    
+/*    
+String nombreProducto = productos.getText().trim();
+    String precioProducto = precio.getText().trim();
+
+    // Validaciones...
+    if (nombreProducto.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Por favor, complete el campo Nombre del producto.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    if (precioProducto.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Por favor, complete el campo Precio.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    // Guardar la ruta de la imagen en la base de datos
+    try {
+        if (conect != null) {
+            String sql = "INSERT INTO productos (nombre_producto, precio, foto) VALUES (?, ?, ?)";
+            try (PreparedStatement ps = conect.prepareStatement(sql)) {
+                ps.setString(1, nombreProducto);
+                ps.setBigDecimal(2, new BigDecimal(precioProducto));
+                ps.setString(3, rutaImagenSeleccionada); // Guardar la ruta de la imagen
+
+                int rowsInserted = ps.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("¡Un nuevo producto fue insertado exitosamente!");
+                }
+            }
+        } else {
+            System.out.println("Error: La conexión a la base de datos no está establecida.");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } catch (NumberFormatException e) {
+        System.out.println("Error: El precio debe ser un número válido.");
+    }
+
+    */
+    }//GEN-LAST:event_jButton1ActionPerformed
+    
+     
+    private void añadir_fotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_fotoActionPerformed
+                                         
+    JFileChooser fileChooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png");
+    fileChooser.setFileFilter(filter);
+
+    int result = fileChooser.showOpenDialog(this); // Mostrar el diálogo para elegir imagen
+
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile();
+        String rutaImagen = selectedFile.getAbsolutePath();
+
+        Path path = Paths.get(rutaImagen);
+        try {
+            imagenBytes = Files.readAllBytes(path); // Convertir la imagen a un array de bytes
+
+            // Mostrar la imagen en el JLabel llamado "foto"
+            ImageIcon icon = new ImageIcon(imagenBytes);
+            
+            // Redimensionar la imagen
+            Image img = icon.getImage(); // Obtener la imagen
+            Image resizedImg = img.getScaledInstance(foto.getWidth(), foto.getHeight(), Image.SCALE_SMOOTH); // Redimensionar
+            icon = new ImageIcon(resizedImg); // Crear un nuevo ImageIcon con la imagen redimensionada
+
+            foto.setText(""); // Limpiar texto si es necesario
+            foto.setIcon(icon); // Asignar la imagen redimensionada al JLabel
+        } catch (IOException ex) {
+            Logger.getLogger(Pro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    } else {
+        JOptionPane.showMessageDialog(null, "No se seleccionó ninguna imagen", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    }
+
+    if (imagenBytes != null) {
+        System.out.println("Imagen cargada correctamente.");
+    } else {
+        System.out.println("No se cargó ninguna imagen.");
+    }
+
+/*
+JFileChooser fileChooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png");
+    fileChooser.setFileFilter(filter);
+
+    int result = fileChooser.showOpenDialog(this);
+
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile();
+        String rutaImagen = selectedFile.getAbsolutePath(); // Guardar la ruta de la imagen
+
+        // Mostrar la imagen en el JLabel llamado "foto"
+        ImageIcon icon = new ImageIcon(rutaImagen);
+        foto.setText("");
+        foto.setIcon(icon); // Asignar la imagen seleccionada al JLabel
+
+        // Aquí puedes almacenar la ruta en una variable para usarla más tarde
+        this.rutaImagenSeleccionada = rutaImagen; // Suponiendo que tienes una variable para almacenar la ruta
+    } else {
+        JOptionPane.showMessageDialog(null, "No se seleccionó ninguna imagen", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    }
+
+*/
+    }//GEN-LAST:event_añadir_fotoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -211,8 +406,8 @@ public class Pro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JComboBox<String> marca_combo;
+    private javax.swing.JTextField precio;
+    private javax.swing.JTextField productos;
     // End of variables declaration//GEN-END:variables
 }

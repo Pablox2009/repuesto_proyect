@@ -5,12 +5,25 @@
  */
 package repuesto_controler;
 
+import Conexion.conexion;
 import codigo.menuCode;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import modelo.menuModel;
+import javax.imageio.ImageIO; // Importa ImageIO para leer imágenes
+import java.io.ByteArrayInputStream;
 
 /**
  *
@@ -21,9 +34,12 @@ public class Menu_principal extends javax.swing.JFrame {
     menuCode mc = new menuCode();
     menuModel mm = new menuModel();
     private String id = "";
-    
+    conexion a = new conexion();
+     Connection conect;
     public Menu_principal() {
+        this.conect = a.conectar();
         initComponents();
+        mostrar_datos();
         
     }
     
@@ -49,8 +65,62 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
     }
+ 
+
+public void mostrar_datos() {
+    DefaultTableModel modelo = new DefaultTableModel();
+    modelo.addColumn("Nombre del Producto");
+    modelo.addColumn("Precio");
+    modelo.addColumn("Foto"); // Columna para las imágenes
+
+    try {
+        String sql = "SELECT * FROM productos";
+        PreparedStatement ps = conect.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Object[] fila = new Object[3]; // Cambia a 3 elementos
+            fila[0] = rs.getString("nombre_producto");
+            fila[1] = rs.getBigDecimal("precio");
+
+            // Leer el BLOB
+            byte[] blobData = rs.getBytes("foto"); // Asegúrate de que "foto" sea el nombre de la columna
+            ImageIcon imageIcon = null;
+
+            if (blobData != null) {
+                try {
+                    // Convertir el BLOB a ImageIcon
+                    ByteArrayInputStream bis = new ByteArrayInputStream(blobData);
+                    imageIcon = new ImageIcon(ImageIO.read(bis));
+                } catch (Exception e) {
+                    System.out.println("No se pudo cargar la imagen desde el BLOB.");
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("El BLOB está vacío.");
+            }
+
+            fila[2] = imageIcon; // Asignar la imagen a la fila
+
+            modelo.addRow(fila);
+        }
+
+        tabla_repuestos.setModel(modelo); // Actualizar el modelo de la tabla
+
+        // Configurar el renderer para la columna de imágenes
+        tabla_repuestos.getColumnModel().getColumn(2).setCellRenderer(new RenderImagen());
+
+        // Establecer el ancho de las columnas
+        tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(150); // Nombre del Producto
+        tabla_repuestos.getColumnModel().getColumn(1).setPreferredWidth(70); // Precio
+        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(200); // Foto
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
     
-    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -87,15 +157,25 @@ public class Menu_principal extends javax.swing.JFrame {
 
         tabla_repuestos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3"
             }
         ));
+        tabla_repuestos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabla_repuestosMouseClicked(evt);
+            }
+        });
+        tabla_repuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tabla_repuestosKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabla_repuestos);
 
         imprimir.setText("Imprimir");
@@ -103,6 +183,11 @@ public class Menu_principal extends javax.swing.JFrame {
         jLabel1.setText("Buscar");
 
         jButton1.setText("Modificar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Eliminar");
 
@@ -164,6 +249,21 @@ public class Menu_principal extends javax.swing.JFrame {
         Pro a = new Pro();
         a.setVisible(true);
     }//GEN-LAST:event_bot_añadirActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tabla_repuestosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabla_repuestosKeyTyped
+        // TODO add your handling code here:
+      
+
+    }//GEN-LAST:event_tabla_repuestosKeyTyped
+
+    private void tabla_repuestosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_repuestosMouseClicked
+      // tabla_repuestos.setModel(modelo); // Actualizar el modelo de la tabla
+
+    }//GEN-LAST:event_tabla_repuestosMouseClicked
 
     /**
      * @param args the command line arguments
