@@ -4,35 +4,37 @@
  * and open the template in the editor.
  */
 package repuesto_controler;
-
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 class RenderImagen extends DefaultTableCellRenderer {
+    private static final int IMG_SIZE = 100; // Tamaño cuadrado de la imagen (500x500 píxeles)
+
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
-            boolean isSelected, boolean hasFocus, int row) {
-        
-        // Verifica si el valor es una instancia de ImageIcon
+            boolean isSelected, boolean hasFocus, int row, int column) {
+
+        JLabel label = new JLabel();
+
         if (value instanceof ImageIcon) {
             ImageIcon icon = (ImageIcon) value;
-            setIcon(icon); // Establece el icono para la celda
-            setText(null); // Asegúrate de que no se muestre texto
+
+            // Redimensionar la imagen a un tamaño cuadrado de 500x500
+            Image img = icon.getImage();
+            Image imgScaled = img.getScaledInstance(IMG_SIZE, IMG_SIZE, Image.SCALE_SMOOTH);
+
+            // Aplicar la imagen redimensionada al JLabel
+            label.setIcon(new ImageIcon(imgScaled));
+            label.setText(null); // Sin texto
         } else {
-            setText(value != null ? value.toString() : ""); // Para otras celdas
-            setIcon(null); // No mostrar icono
+            label.setText(value != null ? value.toString() : ""); // Mostrar texto si no es una imagen
+            label.setIcon(null); // No mostrar icono
         }
-        
-        // Cambiar el color de fondo si está seleccionado
-        if (isSelected) {
-            setBackground(table.getSelectionBackground());
-            setForeground(table.getSelectionForeground());
-        } else {
-            setBackground(table.getBackground());
-            setForeground(table.getForeground());
-        }
-        
-        return this;
+
+        label.setHorizontalAlignment(SwingConstants.CENTER); // Centrar la imagen
+        label.setVerticalAlignment(SwingConstants.CENTER);
+
+        return label;
     }
 }

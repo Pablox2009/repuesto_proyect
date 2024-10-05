@@ -36,6 +36,8 @@ public class Menu_principal extends javax.swing.JFrame {
     private String id = "";
     conexion a = new conexion();
      Connection conect;
+    private int IMG_SIZE;
+    
     public Menu_principal() {
         this.conect = a.conectar();
         initComponents();
@@ -65,9 +67,7 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
     }
- 
-
-public void mostrar_datos() {
+ public void mostrar_datos() {
     DefaultTableModel modelo = new DefaultTableModel();
     modelo.addColumn("Nombre del Producto");
     modelo.addColumn("Precio");
@@ -83,41 +83,46 @@ public void mostrar_datos() {
             fila[0] = rs.getString("nombre_producto");
             fila[1] = rs.getBigDecimal("precio");
 
-            // Leer el BLOB
-            byte[] blobData = rs.getBytes("foto"); // Asegúrate de que "foto" sea el nombre de la columna
-            ImageIcon imageIcon = null;
+            // Obtener la imagen en formato byte[] (BLOB) y convertirla a ImageIcon
+            byte[] fotoBytes = rs.getBytes("foto");
+            ImageIcon imageIcon = new ImageIcon(fotoBytes);
 
-            if (blobData != null) {
-                try {
-                    // Convertir el BLOB a ImageIcon
-                    ByteArrayInputStream bis = new ByteArrayInputStream(blobData);
-                    imageIcon = new ImageIcon(ImageIO.read(bis));
-                } catch (Exception e) {
-                    System.out.println("No se pudo cargar la imagen desde el BLOB.");
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("El BLOB está vacío.");
-            }
-
-            fila[2] = imageIcon; // Asignar la imagen a la fila
+            // Redimensionar la imagen a 100x100
+            Image img = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            fila[2] = new ImageIcon(img); // Asignar la imagen redimensionada a la fila
 
             modelo.addRow(fila);
         }
 
         tabla_repuestos.setModel(modelo); // Actualizar el modelo de la tabla
 
-        // Configurar el renderer para la columna de imágenes
+        // Establecer el renderizador para la columna de imágenes
         tabla_repuestos.getColumnModel().getColumn(2).setCellRenderer(new RenderImagen());
 
-        // Establecer el ancho de las columnas
-        tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(150); // Nombre del Producto
-        tabla_repuestos.getColumnModel().getColumn(1).setPreferredWidth(70); // Precio
-        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(200); // Foto
+        // Ajustar el ancho de las columnas
+        tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(200); // Nombre del Producto
+        tabla_repuestos.getColumnModel().getColumn(1).setPreferredWidth(103); // Precio
+
+        // Ajustar el tamaño de la columna de imágenes
+        int fotoWidth = 200; // Ancho preferido de la columna de foto
+        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(fotoWidth); // Ajustar a 100px
+
+        // Ajustar el modo de ajuste automático
+        tabla_repuestos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Desactivar ajuste automático
+
+        // Ajustar la altura de las filas
+        tabla_repuestos.setRowHeight(100); // Altura de las filas en 100px
+
     } catch (SQLException e) {
         e.printStackTrace();
     }
 }
+
+
+
+
+
+
 
     
 
@@ -199,10 +204,8 @@ public void mostrar_datos() {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(imprimir, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 951, Short.MAX_VALUE)
+                        .addComponent(imprimir))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -214,7 +217,8 @@ public void mostrar_datos() {
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton1)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton2)))
+                                .addComponent(jButton2))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -230,9 +234,9 @@ public void mostrar_datos() {
                     .addComponent(bot_añadir)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13)
                 .addComponent(imprimir)
                 .addGap(17, 17, 17))
         );
