@@ -18,7 +18,7 @@ import javax.swing.JComboBox;
  * @author Usuario
  */
 public class proCode {
-        public void marcas(JComboBox combo){    
+    public void marcas(JComboBox combo){    
         Map<String, Integer> mapMarcas = new HashMap<>();
         String mostrar = "SELECT * FROM marca ORDER BY nombre ASC";
         combo.addItem("Seleccionar");

@@ -25,17 +25,16 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JLabel;
+
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 /**
  *
  * @author coron
  */
 public class Pro extends javax.swing.JFrame {
-     private byte[] imagenBytes;
+    private byte[] imagenBytes;
     conexion a = new conexion();
-     Connection conect;
+    Connection conect;
     
     proCode pc = new proCode();
     proModel pm = new proModel();
@@ -45,13 +44,13 @@ public class Pro extends javax.swing.JFrame {
         initComponents();
        
 
-      /*  pc.marcas(marca_combo);
+        pc.marcas(marca_combo);
         marca_combo.addActionListener((actionEvt) -> {
             JComboBox comboBox = (JComboBox) actionEvt.getSource();
             Map<String, Integer> mapMarca = (Map<String, Integer>) comboBox.getClientProperty("mapMarca");
             String marca = (String) comboBox.getSelectedItem();
             pm.setId_marca(mapMarca.get(marca));
-        });*/
+        });
     }
 
     /**
