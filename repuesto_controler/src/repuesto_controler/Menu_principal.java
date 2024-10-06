@@ -5,12 +5,25 @@
  */
 package repuesto_controler;
 
+import Conexion.conexion;
 import codigo.menuCode;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import modelo.menuModel;
+import javax.imageio.ImageIO; // Importa ImageIO para leer imágenes
+import java.io.ByteArrayInputStream;
 
 /**
  *
@@ -21,9 +34,14 @@ public class Menu_principal extends javax.swing.JFrame {
     menuCode mc = new menuCode();
     menuModel mm = new menuModel();
     private String id = "";
+    conexion a = new conexion();
+     Connection conect;
+    private int IMG_SIZE;
     
     public Menu_principal() {
+        this.conect = a.conectar();
         initComponents();
+        mostrar_datos();
         
     }
     
@@ -49,8 +67,65 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
     }
+ public void mostrar_datos() {
+    DefaultTableModel modelo = new DefaultTableModel();
+    modelo.addColumn("Nombre del Producto");
+    modelo.addColumn("Precio");
+    modelo.addColumn("Foto"); // Columna para las imágenes
+
+    try {
+        String sql = "SELECT * FROM productos";
+        PreparedStatement ps = conect.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Object[] fila = new Object[3]; // Cambia a 3 elementos
+            fila[0] = rs.getString("nombre_producto");
+            fila[1] = rs.getBigDecimal("precio");
+
+            // Obtener la imagen en formato byte[] (BLOB) y convertirla a ImageIcon
+            byte[] fotoBytes = rs.getBytes("foto");
+            ImageIcon imageIcon = new ImageIcon(fotoBytes);
+
+            // Redimensionar la imagen a 100x100
+            Image img = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            fila[2] = new ImageIcon(img); // Asignar la imagen redimensionada a la fila
+
+            modelo.addRow(fila);
+        }
+
+        tabla_repuestos.setModel(modelo); // Actualizar el modelo de la tabla
+
+        // Establecer el renderizador para la columna de imágenes
+        tabla_repuestos.getColumnModel().getColumn(2).setCellRenderer(new RenderImagen());
+
+        // Ajustar el ancho de las columnas
+        tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(200); // Nombre del Producto
+        tabla_repuestos.getColumnModel().getColumn(1).setPreferredWidth(103); // Precio
+
+        // Ajustar el tamaño de la columna de imágenes
+        int fotoWidth = 200; // Ancho preferido de la columna de foto
+        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(fotoWidth); // Ajustar a 100px
+
+        // Ajustar el modo de ajuste automático
+        tabla_repuestos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Desactivar ajuste automático
+
+        // Ajustar la altura de las filas
+        tabla_repuestos.setRowHeight(100); // Altura de las filas en 100px
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+
+
+
+
+
+
     
-    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -87,15 +162,25 @@ public class Menu_principal extends javax.swing.JFrame {
 
         tabla_repuestos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3"
             }
         ));
+        tabla_repuestos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabla_repuestosMouseClicked(evt);
+            }
+        });
+        tabla_repuestos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tabla_repuestosKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabla_repuestos);
 
         imprimir.setText("Imprimir");
@@ -103,6 +188,11 @@ public class Menu_principal extends javax.swing.JFrame {
         jLabel1.setText("Buscar");
 
         jButton1.setText("Modificar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Eliminar");
 
@@ -114,10 +204,8 @@ public class Menu_principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(imprimir, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 951, Short.MAX_VALUE)
+                        .addComponent(imprimir))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -129,7 +217,8 @@ public class Menu_principal extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton1)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton2)))
+                                .addComponent(jButton2))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -145,9 +234,9 @@ public class Menu_principal extends javax.swing.JFrame {
                     .addComponent(bot_añadir)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13)
                 .addComponent(imprimir)
                 .addGap(17, 17, 17))
         );
@@ -164,6 +253,21 @@ public class Menu_principal extends javax.swing.JFrame {
         Pro a = new Pro();
         a.setVisible(true);
     }//GEN-LAST:event_bot_añadirActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tabla_repuestosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabla_repuestosKeyTyped
+        // TODO add your handling code here:
+      
+
+    }//GEN-LAST:event_tabla_repuestosKeyTyped
+
+    private void tabla_repuestosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_repuestosMouseClicked
+      // tabla_repuestos.setModel(modelo); // Actualizar el modelo de la tabla
+
+    }//GEN-LAST:event_tabla_repuestosMouseClicked
 
     /**
      * @param args the command line arguments

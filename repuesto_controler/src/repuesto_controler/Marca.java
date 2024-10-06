@@ -5,6 +5,15 @@
  */
 package repuesto_controler;
 
+import Conexion.conexion;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author coron
@@ -14,9 +23,51 @@ public class Marca extends javax.swing.JFrame {
     /**
      * Creates new form Marca
      */
+     conexion a = new conexion();
+     Connection conect;
     public Marca() {
         initComponents();
+        this.conect = a.conectar();
+        mostrardatos();
     }
+
+   public void mostrardatos() {
+       DefaultTableModel modelo = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            // Todas las celdas no serán editables
+            return false;
+        }
+    };
+
+    
+    
+    modelo.addColumn("ID");
+    modelo.addColumn("Nombre");
+
+    tabla_modelo.setModel(modelo);
+
+    String sql = "SELECT * FROM marca";
+    
+    try {
+     
+        Statement st = conect.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        
+        while (rs.next()) {
+            Object[] fila = new Object[2];
+            fila[0] = rs.getInt("id_marca");
+            fila[1] = rs.getString("nombre");
+            modelo.addRow(fila);
+        }
+        
+        
+        rs.close();
+        st.close();
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "Error al mostrar los datos: " + ex.getMessage());
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,18 +79,18 @@ public class Marca extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        text_marca = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        tabla_modelo = new javax.swing.JTable();
+        subir = new javax.swing.JButton();
+        modificar = new javax.swing.JButton();
+        boton_eliminar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Marca:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabla_modelo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -49,18 +100,33 @@ public class Marca extends javax.swing.JFrame {
                 "Title 1", "Title 2"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        tabla_modelo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabla_modeloMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tabla_modelo);
 
-        jButton1.setText("Subir");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        subir.setText("Subir");
+        subir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                subirActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Modificar");
+        modificar.setText("Modificar");
+        modificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modificarActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Eliminar");
+        boton_eliminar.setText("Eliminar");
+        boton_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boton_eliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -70,17 +136,17 @@ public class Marca extends javax.swing.JFrame {
                 .addGap(37, 37, 37)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(text_marca, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(221, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(47, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(45, 45, 45))
+                    .addComponent(modificar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(subir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(boton_eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -88,27 +154,138 @@ public class Marca extends javax.swing.JFrame {
                 .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(text_marca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(jButton1)
+                        .addGap(44, 44, 44)
+                        .addComponent(subir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
+                        .addComponent(modificar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)))
+                        .addComponent(boton_eliminar)))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void subirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subirActionPerformed
+
+    String nombreMarca = text_marca.getText();
+    
+    if (nombreMarca.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El campo de marca no puede estar vacío.");
+        return;
+    }
+  
+    try {
+   
+        String sql = "INSERT INTO marca (nombre) VALUES (?)";
+       
+        PreparedStatement ps = conect.prepareStatement(sql);
+        ps.setString(1, nombreMarca);
+        
+        int rowsInserted = ps.executeUpdate();
+        
+        if (rowsInserted > 0) {
+            JOptionPane.showMessageDialog(this, "Marca insertada exitosamente.");
+        }
+        
+        ps.close();
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(this, "Error al insertar la marca: " + ex.getMessage());
+    }
+    mostrardatos();
+    text_marca.setText("");
+      
+    }//GEN-LAST:event_subirActionPerformed
+
+    private void modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarActionPerformed
+       
+    int filaSeleccionada = tabla_modelo.getSelectedRow();
+    if (filaSeleccionada >= 0) {
+        
+        int idMarca = Integer.parseInt(tabla_modelo.getValueAt(filaSeleccionada, 0).toString());
+        String nuevoNombre = text_marca.getText();
+        if (nuevoNombre.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El campo de marca no puede estar vacío.");
+            return;
+        }
+        try {
+           
+            String sql = "UPDATE marca SET nombre = ? WHERE id_marca = ?";
+            PreparedStatement ps = conect.prepareStatement(sql);
+            ps.setString(1, nuevoNombre);
+            ps.setInt(2, idMarca);
+            int rowsUpdated = ps.executeUpdate();
+            
+            if (rowsUpdated > 0) {
+                JOptionPane.showMessageDialog(this, "Marca modificada exitosamente.");
+                mostrardatos();
+                text_marca.setText("");
+            }
+            
+         
+            ps.close();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al modificar la marca: " + ex.getMessage());
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Debes seleccionar una fila para modificar.");
+    }
+    
+    }//GEN-LAST:event_modificarActionPerformed
+
+    private void tabla_modeloMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabla_modeloMouseClicked
+        
+    int filaSeleccionada = tabla_modelo.getSelectedRow();
+    if (filaSeleccionada >= 0) {
+        String nombreMarca = tabla_modelo.getValueAt(filaSeleccionada, 1).toString();
+        text_marca.setText(nombreMarca);
+    } else {
+        JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila.");
+    }
+    }//GEN-LAST:event_tabla_modeloMouseClicked
+
+    private void boton_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_eliminarActionPerformed
+       
+    int filaSeleccionada = tabla_modelo.getSelectedRow();
+    if (filaSeleccionada >= 0) {
+        int idMarca = Integer.parseInt(tabla_modelo.getValueAt(filaSeleccionada, 0).toString());
+        int confirmacion = JOptionPane.showConfirmDialog(this, 
+            "¿Estás seguro de que deseas eliminar esta marca?", 
+            "Confirmar eliminación", 
+            JOptionPane.YES_NO_OPTION);
+        
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            
+            try {
+                
+                String sql = "DELETE FROM marca WHERE id_marca = ?";
+              
+                PreparedStatement ps = conect.prepareStatement(sql);
+                ps.setInt(1, idMarca);
+                
+                int rowsDeleted = ps.executeUpdate();
+                
+                if (rowsDeleted > 0) {
+                    JOptionPane.showMessageDialog(this, "Marca eliminada exitosamente.");
+                    mostrardatos();
+                     text_marca.setText("");
+                }
+                
+                ps.close();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Error al eliminar la marca: " + ex.getMessage());
+            }
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Debes seleccionar una fila para eliminar.");
+    }
+    }//GEN-LAST:event_boton_eliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -146,12 +323,12 @@ public class Marca extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton boton_eliminar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton modificar;
+    private javax.swing.JButton subir;
+    private javax.swing.JTable tabla_modelo;
+    private javax.swing.JTextField text_marca;
     // End of variables declaration//GEN-END:variables
 }
