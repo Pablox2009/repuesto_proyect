@@ -209,8 +209,6 @@ public class Pro extends javax.swing.JFrame {
         // Obtener los datos de los JTextField
         String nombreProducto = productos.getText().trim(); // Usar trim() para eliminar espacios en blanco
         String precioProducto = precio.getText().trim();
-        System.out.println("Nombre del Producto: '" + nombreProducto + "'");
-        System.out.println("Precio del Producto: '" + precioProducto + "'");
 
         // Verificar si los campos están vacíos
         if (nombreProducto.isEmpty()) {

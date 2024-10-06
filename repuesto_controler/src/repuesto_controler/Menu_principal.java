@@ -6,6 +6,7 @@
 package repuesto_controler;
 
 import Conexion.conexion;
+import codigo.imprimir;
 import codigo.menuCode;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -33,19 +34,16 @@ public class Menu_principal extends javax.swing.JFrame {
 
     menuCode mc = new menuCode();
     menuModel mm = new menuModel();
+    imprimir im = new imprimir();
     private String id = "";
-    conexion a = new conexion();
-     Connection conect;
     private int IMG_SIZE;
     
     public Menu_principal() {
-        this.conect = a.conectar();
         initComponents();
-        mostrar_datos();
-        
+        repuestosCargados();
     }
     
-    public void EmpleadosCargados(){
+    public void repuestosCargados(){
         DefaultTableModel model = mc.repuestos();
         tabla_repuestos.setModel(model);
         TableColumnModel columna= tabla_repuestos.getColumnModel();
@@ -53,6 +51,16 @@ public class Menu_principal extends javax.swing.JFrame {
         columna.getColumn(0).setMaxWidth(0);
         columna.getColumn(1).setMinWidth(0);
         columna.getColumn(1).setMaxWidth(0);
+        tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(200);
+        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(103);
+        tabla_repuestos.getColumnModel().getColumn(3).setPreferredWidth(100);
+        tabla_repuestos.getColumnModel().getColumn(4).setPreferredWidth(100);
+        tabla_repuestos.getColumnModel().getColumn(5).setCellRenderer(new RenderImagen());
+
+        int fotoWidth = 200;
+        tabla_repuestos.getColumnModel().getColumn(5).setPreferredWidth(fotoWidth);
+        tabla_repuestos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tabla_repuestos.setRowHeight(100);
         tabla_repuestos.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -67,65 +75,6 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
     }
- public void mostrar_datos() {
-    DefaultTableModel modelo = new DefaultTableModel();
-    modelo.addColumn("Nombre del Producto");
-    modelo.addColumn("Precio");
-    modelo.addColumn("Foto"); // Columna para las imágenes
-
-    try {
-        String sql = "SELECT * FROM productos";
-        PreparedStatement ps = conect.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-
-        while (rs.next()) {
-            Object[] fila = new Object[3]; // Cambia a 3 elementos
-            fila[0] = rs.getString("nombre_producto");
-            fila[1] = rs.getBigDecimal("precio");
-
-            // Obtener la imagen en formato byte[] (BLOB) y convertirla a ImageIcon
-            byte[] fotoBytes = rs.getBytes("foto");
-            ImageIcon imageIcon = new ImageIcon(fotoBytes);
-
-            // Redimensionar la imagen a 100x100
-            Image img = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            fila[2] = new ImageIcon(img); // Asignar la imagen redimensionada a la fila
-
-            modelo.addRow(fila);
-        }
-
-        tabla_repuestos.setModel(modelo); // Actualizar el modelo de la tabla
-
-        // Establecer el renderizador para la columna de imágenes
-        tabla_repuestos.getColumnModel().getColumn(2).setCellRenderer(new RenderImagen());
-
-        // Ajustar el ancho de las columnas
-        tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(200); // Nombre del Producto
-        tabla_repuestos.getColumnModel().getColumn(1).setPreferredWidth(103); // Precio
-
-        // Ajustar el tamaño de la columna de imágenes
-        int fotoWidth = 200; // Ancho preferido de la columna de foto
-        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(fotoWidth); // Ajustar a 100px
-
-        // Ajustar el modo de ajuste automático
-        tabla_repuestos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Desactivar ajuste automático
-
-        // Ajustar la altura de las filas
-        tabla_repuestos.setRowHeight(100); // Altura de las filas en 100px
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
-
-
-
-
-
-
-
-    
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -184,6 +133,11 @@ public class Menu_principal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tabla_repuestos);
 
         imprimir.setText("Imprimir");
+        imprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imprimirActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Buscar");
 
@@ -204,7 +158,7 @@ public class Menu_principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 951, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(imprimir))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -268,6 +222,11 @@ public class Menu_principal extends javax.swing.JFrame {
       // tabla_repuestos.setModel(modelo); // Actualizar el modelo de la tabla
 
     }//GEN-LAST:event_tabla_repuestosMouseClicked
+
+    private void imprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirActionPerformed
+        String id = mm.getId();
+        im.imprimir(id);
+    }//GEN-LAST:event_imprimirActionPerformed
 
     /**
      * @param args the command line arguments
