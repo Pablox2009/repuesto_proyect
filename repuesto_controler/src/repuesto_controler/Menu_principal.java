@@ -25,6 +25,7 @@ import javax.swing.table.TableColumnModel;
 import modelo.menuModel;
 import javax.imageio.ImageIO; // Importa ImageIO para leer imágenes
 import java.io.ByteArrayInputStream;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -37,9 +38,11 @@ public class Menu_principal extends javax.swing.JFrame {
     imprimir im = new imprimir();
     private String id = "";
     private int IMG_SIZE;
-    
+    conexion a = new conexion();
+    Connection conect;
     public Menu_principal() {
         initComponents();
+        this.conect = a.conectar();
         repuestosCargados();
     }
     
@@ -75,6 +78,42 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
     }
+    private void eliminarProducto() {
+    // Verifica si hay un elemento seleccionado
+    int fila = tabla_repuestos.getSelectedRow();
+    if (fila != -1) {
+        // Obtiene el ID del producto seleccionado
+        String idProducto = tabla_repuestos.getValueAt(fila, 0).toString();
+
+        // Confirmar eliminación
+        int confirmacion = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que deseas eliminar este producto?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            try {
+                // Prepara la consulta SQL de eliminación
+                String sql = "DELETE FROM productos WHERE id = ?";
+                PreparedStatement ps = conect.prepareStatement(sql);
+                ps.setString(1, idProducto);
+
+                // Ejecuta la consulta
+                int resultado = ps.executeUpdate();
+
+                if (resultado > 0) {
+                    JOptionPane.showMessageDialog(null, "Producto eliminado exitosamente.");
+                    // Actualiza la tabla
+                   
+                } else {
+                    JOptionPane.showMessageDialog(null, "No se pudo eliminar el producto.");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error al eliminar el producto: " + e.getMessage());
+            }
+        }
+    } else {
+        JOptionPane.showMessageDialog(null, "Por favor, selecciona un producto para eliminar.");
+    }
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -149,6 +188,11 @@ public class Menu_principal extends javax.swing.JFrame {
         });
 
         jButton2.setText("Eliminar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -227,6 +271,11 @@ public class Menu_principal extends javax.swing.JFrame {
         String id = mm.getId();
         im.imprimir(id);
     }//GEN-LAST:event_imprimirActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        eliminarProducto();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
