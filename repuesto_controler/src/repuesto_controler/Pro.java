@@ -282,42 +282,38 @@ public class Pro extends javax.swing.JFrame {
      
     private void añadir_fotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_fotoActionPerformed
                                          
-    JFileChooser fileChooser = new JFileChooser();
-    FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png");
-    fileChooser.setFileFilter(filter);
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png");
+        fileChooser.setFileFilter(filter);
 
-    int result = fileChooser.showOpenDialog(this); // Mostrar el diálogo para elegir imagen
+        int result = fileChooser.showOpenDialog(this); // Mostrar el diálogo para elegir imagen
 
-    if (result == JFileChooser.APPROVE_OPTION) {
-        File selectedFile = fileChooser.getSelectedFile();
-        String rutaImagen = selectedFile.getAbsolutePath();
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String rutaImagen = selectedFile.getAbsolutePath();
 
-        Path path = Paths.get(rutaImagen);
-        try {
-            imagenBytes = Files.readAllBytes(path); // Convertir la imagen a un array de bytes
+            Path path = Paths.get(rutaImagen);
+            try {
+                imagenBytes = Files.readAllBytes(path);
+                ImageIcon icon = new ImageIcon(imagenBytes);
 
-            // Mostrar la imagen en el JLabel llamado "foto"
-            ImageIcon icon = new ImageIcon(imagenBytes);
-            
-            // Redimensionar la imagen
-            Image img = icon.getImage(); // Obtener la imagen
-            Image resizedImg = img.getScaledInstance(foto.getWidth(), foto.getHeight(), Image.SCALE_SMOOTH); // Redimensionar
-            icon = new ImageIcon(resizedImg); // Crear un nuevo ImageIcon con la imagen redimensionada
-
-            foto.setText(""); // Limpiar texto si es necesario
-            foto.setIcon(icon); // Asignar la imagen redimensionada al JLabel
-        } catch (IOException ex) {
-            Logger.getLogger(Pro.class.getName()).log(Level.SEVERE, null, ex);
+                Image img = icon.getImage();
+                Image resizedImg = img.getScaledInstance(foto.getWidth(), foto.getHeight(), Image.SCALE_SMOOTH);
+                icon = new ImageIcon(resizedImg);
+                foto.setText("");
+                foto.setIcon(icon);
+            } catch (IOException ex) {
+                Logger.getLogger(Pro.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se seleccionó ninguna imagen", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
-    } else {
-        JOptionPane.showMessageDialog(null, "No se seleccionó ninguna imagen", "Advertencia", JOptionPane.WARNING_MESSAGE);
-    }
 
-    if (imagenBytes != null) {
-        System.out.println("Imagen cargada correctamente.");
-    } else {
-        System.out.println("No se cargó ninguna imagen.");
-    }
+        if (imagenBytes != null) {
+            System.out.println("Imagen cargada correctamente.");
+        } else {
+            System.out.println("No se cargó ninguna imagen.");
+        }
 
     }//GEN-LAST:event_añadir_fotoActionPerformed
 
