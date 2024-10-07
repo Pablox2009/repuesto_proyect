@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-<<<<<<< HEAD
-=======
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/repuesto_controler/RenderImagen.java</file>
+            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/repuesto_controler/Pro.java</file>
+            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/codigo/proCode.java</file>
+            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/modelo/proModel.java</file>
+            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/codigo/imprimir.java</file>
+            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/Conexion/conexion.java</file>
             <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/repuesto_controler/Menu_principal.java</file>
+            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/codigo/menuCode.java</file>
+            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/codigo/marcaCode.java</file>
+            <file>file:/C:/Users/coron/Documents/Chamba/repuesto_proyect/repuesto_controler/src/modelo/menuModel.java</file>
         </group>
     </open-files>
->>>>>>> e118cee4cbfd7e137c6149a5398b5970d9d313dd
 </project-private>

@@ -25,6 +25,7 @@ import javax.swing.table.TableColumnModel;
 import modelo.menuModel;
 import javax.imageio.ImageIO; // Importa ImageIO para leer imágenes
 import java.io.ByteArrayInputStream;
+import java.sql.Blob;
 import javax.swing.JOptionPane;
 
 /**
@@ -40,6 +41,7 @@ public class Menu_principal extends javax.swing.JFrame {
     private int IMG_SIZE;
     conexion a = new conexion();
     Connection conect;
+    private byte[] imagenBytes;
     public Menu_principal() {
         initComponents();
         this.conect = a.conectar();
@@ -47,7 +49,9 @@ public class Menu_principal extends javax.swing.JFrame {
     }
     
     public void repuestosCargados(){
-        DefaultTableModel model = mc.repuestos();
+       /* */
+
+       DefaultTableModel model = mc.repuestos();
         tabla_repuestos.setModel(model);
         TableColumnModel columna= tabla_repuestos.getColumnModel();
         columna.getColumn(0).setMinWidth(0);
@@ -78,6 +82,7 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
     }
+    
     private void eliminarProducto() {
     // Verifica si hay un elemento seleccionado
     int fila = tabla_repuestos.getSelectedRow();
@@ -130,8 +135,9 @@ public class Menu_principal extends javax.swing.JFrame {
         tabla_repuestos = new javax.swing.JTable();
         imprimir = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        mod = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -180,10 +186,10 @@ public class Menu_principal extends javax.swing.JFrame {
 
         jLabel1.setText("Buscar");
 
-        jButton1.setText("Modificar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        mod.setText("Modificar");
+        mod.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                modActionPerformed(evt);
             }
         });
 
@@ -191,6 +197,13 @@ public class Menu_principal extends javax.swing.JFrame {
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Buscar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -207,13 +220,15 @@ public class Menu_principal extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jButton1))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(bot_añadir)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton1)
+                                .addComponent(mod)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton2))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -223,14 +238,15 @@ public class Menu_principal extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bot_añadir)
-                    .addComponent(jButton1)
+                    .addComponent(mod)
                     .addComponent(jButton2))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -242,8 +258,9 @@ public class Menu_principal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void buscadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscadorActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_buscadorActionPerformed
 
     private void bot_añadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_añadirActionPerformed
@@ -252,9 +269,9 @@ public class Menu_principal extends javax.swing.JFrame {
         a.setVisible(true);
     }//GEN-LAST:event_bot_añadirActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void modActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modActionPerformed
+      
+    }//GEN-LAST:event_modActionPerformed
 
     private void tabla_repuestosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabla_repuestosKeyTyped
         // TODO add your handling code here:
@@ -276,6 +293,82 @@ public class Menu_principal extends javax.swing.JFrame {
         // TODO add your handling code here:
         eliminarProducto();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+         String textoBusqueda = buscador.getText().trim(); // Suponiendo que tienes un JTextField llamado txt_buscador
+    if (!textoBusqueda.isEmpty()) {
+        DefaultTableModel model = buscarProductoPorNombreOMarca(textoBusqueda);
+        tabla_repuestos.setModel(model);
+    } else {
+        // Si el campo de búsqueda está vacío, puedes decidir si cargar todos los productos o mostrar un mensaje.
+        repuestosCargados(); // Esto volverá a cargar todos los productos
+    }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+public DefaultTableModel buscarProductoPorNombreOMarca(String textoBusqueda) {
+    DefaultTableModel modeloTabla = new DefaultTableModel();
+    
+    // Definir las columnas del modelo de la tabla
+    modeloTabla.addColumn("Marca");
+    modeloTabla.addColumn("Nombre del Producto");
+    modeloTabla.addColumn("Precio");
+    modeloTabla.addColumn("Foto");
+
+    // Comando SQL para buscar productos
+    String sql = "SELECT  m.nombre AS marca, p.nombre_producto, p.precio, p.foto " +
+                 "FROM productos p " +
+                 "JOIN marca m ON p.marca = m.id_marca " +
+                 "WHERE p.borrado = 1 AND (p.nombre_producto LIKE ? OR m.nombre LIKE ?)";
+
+    // Ejecutar la consulta SQL
+    try (Connection conn = conexion.conectar(); // Establece la conexión
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        
+        // Configurar los parámetros de la consulta
+        ps.setString(1, "%" + textoBusqueda + "%"); // Búsqueda por nombre del producto
+        ps.setString(2, "%" + textoBusqueda + "%"); // Búsqueda por nombre de la marca
+        
+        // Ejecutar la consulta y obtener resultados
+        ResultSet rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            Object[] fila = new Object[4]; // Cambia a 4 ya que solo necesitas 4 columnas
+            
+            fila[0] = rs.getString("marca"); // Nombre de la marca
+            fila[1] = rs.getString("nombre_producto"); // Nombre del producto
+            fila[2] = rs.getBigDecimal("precio"); // Precio del producto
+            
+            // Convertir la imagen de la base de datos (blob) a ImageIcon
+            Blob blob = rs.getBlob("foto");
+            if (blob != null) {
+                byte[] data = blob.getBytes(1, (int) blob.length());
+                ImageIcon icon = new ImageIcon(data);
+                Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                fila[3] = new ImageIcon(img); // Imagen
+            } else {
+                fila[3] = null; // Si no hay imagen, establece null
+            }
+            
+            modeloTabla.addRow(fila); // Agregar fila al modelo
+        }
+         tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(200);
+        tabla_repuestos.getColumnModel().getColumn(1).setPreferredWidth(103);
+        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(100);
+       // tabla_repuestos.getColumnModel().getColumn(4).setPreferredWidth(100);
+        tabla_repuestos.getColumnModel().getColumn(3).setCellRenderer(new RenderImagen());
+
+        int fotoWidth = 200;
+        tabla_repuestos.getColumnModel().getColumn(3).setPreferredWidth(fotoWidth);
+        tabla_repuestos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tabla_repuestos.setRowHeight(100);
+    } catch (SQLException e) {
+        e.printStackTrace(); // Manejo de errores
+    }
+    
+    return modeloTabla; // Retornar el modelo de la tabla
+}
+
 
     /**
      * @param args the command line arguments
@@ -320,6 +413,7 @@ public class Menu_principal extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton mod;
     private javax.swing.JTable tabla_repuestos;
     // End of variables declaration//GEN-END:variables
 }
