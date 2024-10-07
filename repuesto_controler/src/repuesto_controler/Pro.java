@@ -15,6 +15,8 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import modelo.proModel;
 import Conexion.conexion;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -27,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+import modelo.menuModel;
 /**
  *
  * @author coron
@@ -35,15 +38,17 @@ public class Pro extends javax.swing.JFrame {
     private byte[] imagenBytes;
     conexion a = new conexion();
     Connection conect;
-    
+    private Menu_principal mp;
     proCode pc = new proCode();
     proModel pm = new proModel();
+    String id;
+    int id_marca = 0;
+    private int mod;
     private String rutaImagenSeleccionada;
+    
     public Pro() {
         this.conect = a.conectar();
         initComponents();
-       
-
         pc.marcas(marca_combo);
         marca_combo.addActionListener((actionEvt) -> {
             JComboBox comboBox = (JComboBox) actionEvt.getSource();
@@ -51,6 +56,48 @@ public class Pro extends javax.swing.JFrame {
             String marca = (String) comboBox.getSelectedItem();
             pm.setId_marca(mapMarca.get(marca));
         });
+        centrar();
+    }
+    
+    public Pro(Menu_principal mp1) {
+        this.mp = mp1;
+        this.conect = a.conectar();
+        initComponents();
+        pc.marcas(marca_combo);
+        marca_combo.addActionListener((actionEvt) -> {
+            JComboBox comboBox = (JComboBox) actionEvt.getSource();
+            Map<String, Integer> mapMarca = (Map<String, Integer>) comboBox.getClientProperty("mapMarca");
+            String marca = (String) comboBox.getSelectedItem();
+            pm.setId_marca(mapMarca.get(marca));
+            id_marca = pm.getId_marca();
+        });
+        centrar();
+        
+    }
+    
+    private void centrar(){
+        Dimension tamaño = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (tamaño.width - this.getWidth()) / 2;
+        int y = (tamaño.height - this.getHeight()) / 2;
+        this.setLocation(x, y);
+    }
+    
+    public void modos(int modo){
+        this.mod = modo;
+        if(mod != 1){
+            marca_ref.setVisible(false);
+        }
+        else{
+            marca_ref.setEditable(false);
+        }
+    }
+    
+    public void datos(String id, String nombre, String marca, int idM, String precio){
+        this.id_marca = idM;
+        this.id = id;
+        nombreTXT.setText(nombre);
+        marca_ref.setText(marca);
+        precioTXT.setText(precio);
     }
 
     /**
@@ -62,8 +109,8 @@ public class Pro extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        productos = new javax.swing.JTextField();
-        precio = new javax.swing.JTextField();
+        nombreTXT = new javax.swing.JTextField();
+        precioTXT = new javax.swing.JTextField();
         foto = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -72,27 +119,32 @@ public class Pro extends javax.swing.JFrame {
         añadir_marca = new javax.swing.JButton();
         añadir_foto = new javax.swing.JButton();
         marca_combo = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        boton_subir = new javax.swing.JButton();
+        boton_salir = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        marca_ref = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Formulario de productos");
+        setResizable(false);
 
-        productos.addActionListener(new java.awt.event.ActionListener() {
+        nombreTXT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                productosActionPerformed(evt);
+                nombreTXTActionPerformed(evt);
             }
         });
 
-        precio.addActionListener(new java.awt.event.ActionListener() {
+        precioTXT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                precioActionPerformed(evt);
+                precioTXTActionPerformed(evt);
             }
         });
 
         foto.setBackground(new java.awt.Color(153, 0, 153));
         foto.setText("           No selecciono una foto");
+        foto.setBorder(javax.swing.BorderFactory.createMatteBorder(2, 2, 2, 2, new java.awt.Color(51, 51, 51)));
 
-        jLabel2.setText("Producto:");
+        jLabel2.setText("Nombre:");
 
         jLabel3.setText("Marca:");
 
@@ -114,19 +166,24 @@ public class Pro extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("subir");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        boton_subir.setBackground(new java.awt.Color(51, 255, 51));
+        boton_subir.setText("subir");
+        boton_subir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                boton_subirActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Volver");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        boton_salir.setBackground(new java.awt.Color(255, 255, 153));
+        boton_salir.setText("Volver");
+        boton_salir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                boton_salirActionPerformed(evt);
             }
         });
+
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 36)); // NOI18N
+        jLabel1.setText("Producto");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -145,148 +202,184 @@ public class Pro extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(productos, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                                    .addComponent(precio))
+                                .addComponent(precioTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(foto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(foto, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))
+                        .addGap(38, 38, 38)
                         .addComponent(añadir_foto))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(marca_combo, 0, 237, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(añadir_marca)))
-                .addGap(59, 59, 59))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(nombreTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(marca_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(marca_ref)
+                                .addGap(18, 18, 18)
+                                .addComponent(añadir_marca)))))
+                .addGap(33, 33, 33))
             .addGroup(layout.createSequentialGroup()
-                .addGap(203, 203, 203)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(208, 208, 208)
+                        .addComponent(boton_subir, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(41, 41, 41)
+                        .addComponent(boton_salir))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(159, 159, 159)
+                        .addComponent(jLabel1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(76, 76, 76)
+                .addGap(22, 22, 22)
+                .addComponent(jLabel1)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(productos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nombreTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(añadir_marca)
-                    .addComponent(marca_combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(marca_combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(marca_ref, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(precio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(precioTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(añadir_foto)
                     .addComponent(foto, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(4, 4, 4)
-                .addComponent(jButton2)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(boton_subir)
+                    .addComponent(boton_salir))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void precioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precioActionPerformed
+    private void precioTXTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precioTXTActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_precioActionPerformed
+    }//GEN-LAST:event_precioTXTActionPerformed
 
-    private void productosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productosActionPerformed
+    private void nombreTXTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreTXTActionPerformed
         // TODO add your handling code here:
         
-    }//GEN-LAST:event_productosActionPerformed
+    }//GEN-LAST:event_nombreTXTActionPerformed
 
    
     private void añadir_marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_marcaActionPerformed
-        // TODO add your handling code here:
         Marca a= new Marca();
         a.setVisible(true);
         dispose();
     }//GEN-LAST:event_añadir_marcaActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         // Obtener los datos de los JTextField
-    String nombreProducto = productos.getText().trim(); // Usar trim() para eliminar espacios en blanco
-    String precioProducto = precio.getText().trim();
+    private void boton_subirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_subirActionPerformed
 
-    // Verificar si los campos están vacíos
-    if (nombreProducto.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Por favor, complete el campo Nombre del producto.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
+        String nombreProducto = nombreTXT.getText().trim();
+        String precioProducto = precioTXT.getText().trim();
 
-    if (precioProducto.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "Por favor, complete el campo Precio.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    if (imagenBytes == null) {
-        JOptionPane.showMessageDialog(null, "Por favor, seleccione una imagen para el producto.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    // Obtener el ID de la marca seleccionada del JComboBox
-    Map<String, Integer> mapMarcas = (Map<String, Integer>) marca_combo.getClientProperty("mapMarca");
-    String marcaSeleccionada = (String) marca_combo.getSelectedItem();
-    int idMarca = mapMarcas.get(marcaSeleccionada); // Obtenemos el ID de la marca seleccionada
-
-    // Verificar si la marca fue seleccionada
-    if (idMarca == 0) {
-        JOptionPane.showMessageDialog(null, "Por favor, seleccione una marca.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    try {
-        if (conect != null) {
-            String sql = "INSERT INTO productos (marca, nombre_producto, precio, foto) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement ps = conect.prepareStatement(sql)) {
-                ps.setInt(1, idMarca); // Establecer el ID de la marca
-                ps.setString(2, nombreProducto); // Establecer el nombre del producto
-                ps.setBigDecimal(3, new BigDecimal(precioProducto)); // Establecer el precio
-                if (imagenBytes != null) {
-                    ps.setBytes(4, imagenBytes); // Establecer la imagen
-                } else {
-                    ps.setNull(4, java.sql.Types.BLOB); // Establecer NULL si no hay imagen
-                }
-
-                // Ejecutar la consulta
-                int rowsInserted = ps.executeUpdate();
-                if (rowsInserted > 0) {
-                    JOptionPane.showMessageDialog(null, "¡Un nuevo producto fue insertado exitosamente!");
-                }
-            }
-        } else {
-            System.out.println("Error: La conexión a la base de datos no está establecida.");
+        if (nombreProducto.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Por favor, complete el campo Nombre del producto.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } catch (NumberFormatException e) {
-        System.out.println("Error: El precio debe ser un número válido.");
-    }
+
+        if (precioProducto.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Por favor, complete el campo Precio.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (id_marca == 0) {
+            JOptionPane.showMessageDialog(null, "Por favor, seleccione una marca.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            if (conect != null) {
+                if(mod == 0){
+                    if (imagenBytes == null) {
+                        JOptionPane.showMessageDialog(null, "Por favor, seleccione una imagen para el producto.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    String sql = "INSERT INTO productos (marca, nombre_producto, precio, foto) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement ps = conect.prepareStatement(sql)) {
+                        ps.setInt(1, id_marca); 
+                        ps.setString(2, nombreProducto);
+                        ps.setBigDecimal(3, new BigDecimal(precioProducto));
+                        if (imagenBytes != null) {
+                            ps.setBytes(4, imagenBytes);
+                        } 
+                        else {
+                            ps.setNull(4, java.sql.Types.BLOB);
+                        }
+
+                        int rowsInserted = ps.executeUpdate();
+                        if (rowsInserted > 0) {
+                            JOptionPane.showMessageDialog(null, "¡Un nuevo producto fue insertado exitosamente!");
+                            mp.repuestosCargados();
+                            id_marca = 0;
+                        }
+                    }
+                }
+                else{
+                    String sql = "UPDATE productos SET marca = ?, nombre_producto = ?, precio = ? WHERE id = ?";
+                    try (PreparedStatement ps = conect.prepareStatement(sql)) {
+                        ps.setInt(1, id_marca); 
+                        ps.setString(2, nombreProducto);
+                        ps.setString(3,precioProducto);
+                        ps.setString(4, id);
+                        /*ps.setBigDecimal(3, new BigDecimal(precioProducto));
+                        if (imagenBytes != null) {
+                            ps.setBytes(4, imagenBytes);
+                        } 
+                        else {
+                            ps.setNull(4, java.sql.Types.BLOB);
+                        }*/
+
+                        int rowsInserted = ps.executeUpdate();
+                        if (rowsInserted > 0) {
+                            JOptionPane.showMessageDialog(null, "¡Se modificó el producto con exito!");
+                            mp.repuestosCargados();
+                            dispose();
+                        }
+                    }
+                }
+            } else {
+               
+            }
+            nombreTXT.setText("");
+            precioTXT.setText("");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+
+        }
     
   
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_boton_subirActionPerformed
     
      
     private void añadir_fotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_fotoActionPerformed
-                                         
+
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png");
         fileChooser.setFileFilter(filter);
 
-        int result = fileChooser.showOpenDialog(this); // Mostrar el diálogo para elegir imagen
+
+        int result = fileChooser.showOpenDialog(this);
+
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
@@ -309,20 +402,11 @@ public class Pro extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "No se seleccionó ninguna imagen", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
 
-        if (imagenBytes != null) {
-            System.out.println("Imagen cargada correctamente.");
-        } else {
-            System.out.println("No se cargó ninguna imagen.");
-        }
-
     }//GEN-LAST:event_añadir_fotoActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        Menu_principal a = new Menu_principal();
-        a.setVisible(true);
+    private void boton_salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_salirActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_boton_salirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -362,16 +446,18 @@ public class Pro extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton añadir_foto;
     private javax.swing.JButton añadir_marca;
+    private javax.swing.JButton boton_salir;
+    private javax.swing.JButton boton_subir;
     private javax.swing.JLabel foto;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JComboBox<String> marca_combo;
-    private javax.swing.JTextField precio;
-    private javax.swing.JTextField productos;
+    private javax.swing.JTextField marca_ref;
+    private javax.swing.JTextField nombreTXT;
+    private javax.swing.JTextField precioTXT;
     // End of variables declaration//GEN-END:variables
 
     void setProducto(String nombreProducto) {
