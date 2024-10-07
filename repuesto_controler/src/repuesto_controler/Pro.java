@@ -217,42 +217,54 @@ public class Pro extends javax.swing.JFrame {
     }//GEN-LAST:event_añadir_marcaActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // Obtener los datos de los JTextField
-        String nombreProducto = productos.getText().trim(); // Usar trim() para eliminar espacios en blanco
-        String precioProducto = precio.getText().trim();
+         // Obtener los datos de los JTextField
+    String nombreProducto = productos.getText().trim(); // Usar trim() para eliminar espacios en blanco
+    String precioProducto = precio.getText().trim();
 
-        // Verificar si los campos están vacíos
-        if (nombreProducto.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Por favor, complete el campo Nombre del producto.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    // Verificar si los campos están vacíos
+    if (nombreProducto.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Por favor, complete el campo Nombre del producto.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        if (precioProducto.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Por favor, complete el campo Precio.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (imagenBytes == null) {
+    if (precioProducto.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Por favor, complete el campo Precio.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    if (imagenBytes == null) {
         JOptionPane.showMessageDialog(null, "Por favor, seleccione una imagen para el producto.", "Error", JOptionPane.ERROR_MESSAGE);
         return;
-        }
+    }
 
-        try {
+    // Obtener el ID de la marca seleccionada del JComboBox
+    Map<String, Integer> mapMarcas = (Map<String, Integer>) marca_combo.getClientProperty("mapMarca");
+    String marcaSeleccionada = (String) marca_combo.getSelectedItem();
+    int idMarca = mapMarcas.get(marcaSeleccionada); // Obtenemos el ID de la marca seleccionada
 
+    // Verificar si la marca fue seleccionada
+    if (idMarca == 0) {
+        JOptionPane.showMessageDialog(null, "Por favor, seleccione una marca.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    try {
         if (conect != null) {
-            String sql = "INSERT INTO productos (nombre_producto, precio, foto) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO productos (marca, nombre_producto, precio, foto) VALUES (?, ?, ?, ?)";
             try (PreparedStatement ps = conect.prepareStatement(sql)) {
-                ps.setString(1, nombreProducto);
-                ps.setBigDecimal(2, new BigDecimal(precioProducto)); 
+                ps.setInt(1, idMarca); // Establecer el ID de la marca
+                ps.setString(2, nombreProducto); // Establecer el nombre del producto
+                ps.setBigDecimal(3, new BigDecimal(precioProducto)); // Establecer el precio
                 if (imagenBytes != null) {
-                    ps.setBytes(3, imagenBytes); // Establecer la imagen
+                    ps.setBytes(4, imagenBytes); // Establecer la imagen
                 } else {
-                    ps.setNull(3, java.sql.Types.BLOB); // Establecer NULL si no hay imagen
+                    ps.setNull(4, java.sql.Types.BLOB); // Establecer NULL si no hay imagen
                 }
 
                 // Ejecutar la consulta
                 int rowsInserted = ps.executeUpdate();
                 if (rowsInserted > 0) {
-                    System.out.println("¡Un nuevo producto fue insertado exitosamente!");
+                    JOptionPane.showMessageDialog(null, "¡Un nuevo producto fue insertado exitosamente!");
                 }
             }
         } else {
@@ -262,7 +274,7 @@ public class Pro extends javax.swing.JFrame {
         e.printStackTrace();
     } catch (NumberFormatException e) {
         System.out.println("Error: El precio debe ser un número válido.");
-  }
+    }
     
   
     }//GEN-LAST:event_jButton1ActionPerformed
