@@ -6,6 +6,8 @@
 package repuesto_controler;
 
 import Conexion.conexion;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +31,14 @@ public class Marca extends javax.swing.JFrame {
         initComponents();
         this.conect = a.conectar();
         mostrardatos();
+        centrar();
+    }
+    
+    private void centrar(){
+        Dimension tamaño = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (tamaño.width - this.getWidth()) / 2;
+        int y = (tamaño.height - this.getHeight()) / 2;
+        this.setLocation(x, y);
     }
 
    public void mostrardatos() {
@@ -85,8 +95,10 @@ public class Marca extends javax.swing.JFrame {
         subir = new javax.swing.JButton();
         modificar = new javax.swing.JButton();
         boton_eliminar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setText("Marca:");
 
@@ -128,6 +140,13 @@ public class Marca extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Salir");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -145,7 +164,8 @@ public class Marca extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(modificar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(subir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(boton_eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(boton_eliminar, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(22, 22, 22))
         );
         layout.setVerticalGroup(
@@ -165,7 +185,9 @@ public class Marca extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(modificar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(boton_eliminar)))
+                        .addComponent(boton_eliminar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -287,6 +309,12 @@ public class Marca extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_boton_eliminarActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Menu_principal mp = new Menu_principal();
+        mp.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -324,6 +352,7 @@ public class Marca extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton boton_eliminar;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton modificar;

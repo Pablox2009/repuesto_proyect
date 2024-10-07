@@ -6,9 +6,11 @@
 package repuesto_controler;
 
 import Conexion.conexion;
-import codigo.imprimir;
+import codigo.Imprimir;
 import codigo.menuCode;
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
@@ -23,10 +25,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import modelo.menuModel;
-import javax.imageio.ImageIO; // Importa ImageIO para leer imágenes
-import java.io.ByteArrayInputStream;
-import java.sql.Blob;
+
 import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -36,22 +38,28 @@ public class Menu_principal extends javax.swing.JFrame {
 
     menuCode mc = new menuCode();
     menuModel mm = new menuModel();
-    imprimir im = new imprimir();
+    Imprimir imp = new Imprimir();
+    
     private String id = "";
-    private int IMG_SIZE;
     conexion a = new conexion();
     Connection conect;
-    private byte[] imagenBytes;
+    
     public Menu_principal() {
         initComponents();
         this.conect = a.conectar();
         repuestosCargados();
+        centrar();
+    }
+    
+    private void centrar(){
+        Dimension tamaño = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (tamaño.width - this.getWidth()) / 2;
+        int y = (tamaño.height - this.getHeight()) / 2;
+        this.setLocation(x, y);
     }
     
     public void repuestosCargados(){
-       /* */
-
-       DefaultTableModel model = mc.repuestos();
+        DefaultTableModel model = mc.repuestos();
         tabla_repuestos.setModel(model);
         TableColumnModel columna= tabla_repuestos.getColumnModel();
         columna.getColumn(0).setMinWidth(0);
@@ -78,46 +86,62 @@ public class Menu_principal extends javax.swing.JFrame {
                     mm.setMarca(tabla_repuestos.getValueAt(fila, 2).toString());
                     mm.setNombre(tabla_repuestos.getValueAt(fila, 3).toString());
                     mm.setPrecio(tabla_repuestos.getValueAt(fila, 4).toString());
+                    id = mm.getId();
                 }
             }
         });
     }
     
-    private void eliminarProducto() {
-    // Verifica si hay un elemento seleccionado
-    int fila = tabla_repuestos.getSelectedRow();
-    if (fila != -1) {
-        // Obtiene el ID del producto seleccionado
-        String idProducto = tabla_repuestos.getValueAt(fila, 0).toString();
+    public void buscarProducto(String buscador){
+        DefaultTableModel model = mc.repuestosBuscar(buscador);
+        tabla_repuestos.setModel(model);
+        TableColumnModel columna= tabla_repuestos.getColumnModel();
+        columna.getColumn(0).setMinWidth(0);
+        columna.getColumn(0).setMaxWidth(0);
+        columna.getColumn(1).setMinWidth(0);
+        columna.getColumn(1).setMaxWidth(0);
+        tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(200);
+        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(103);
+        tabla_repuestos.getColumnModel().getColumn(3).setPreferredWidth(100);
+        tabla_repuestos.getColumnModel().getColumn(4).setPreferredWidth(100);
+        tabla_repuestos.getColumnModel().getColumn(5).setCellRenderer(new RenderImagen());
 
-        // Confirmar eliminación
-        int confirmacion = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que deseas eliminar este producto?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            try {
-                // Prepara la consulta SQL de eliminación
-                String sql = "DELETE FROM productos WHERE id = ?";
-                PreparedStatement ps = conect.prepareStatement(sql);
-                ps.setString(1, idProducto);
-
-                // Ejecuta la consulta
-                int resultado = ps.executeUpdate();
-
-                if (resultado > 0) {
-                    JOptionPane.showMessageDialog(null, "Producto eliminado exitosamente.");
-                    // Actualiza la tabla
-                   
-                } else {
-                    JOptionPane.showMessageDialog(null, "No se pudo eliminar el producto.");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error al eliminar el producto: " + e.getMessage());
-            }
-        }
-    } else {
-        JOptionPane.showMessageDialog(null, "Por favor, selecciona un producto para eliminar.");
+        int fotoWidth = 200;
+        tabla_repuestos.getColumnModel().getColumn(5).setPreferredWidth(fotoWidth);
+        tabla_repuestos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tabla_repuestos.setRowHeight(100);
     }
-}
+    
+    private void eliminarProducto() {
+        int fila = tabla_repuestos.getSelectedRow();
+        if (fila != -1) {
+            String idProducto = tabla_repuestos.getValueAt(fila, 0).toString();
+
+            int confirmacion = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que deseas eliminar este producto?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                try {
+                    String sql = "DELETE FROM productos WHERE id = ?";
+                    PreparedStatement ps = conect.prepareStatement(sql);
+                    ps.setString(1, idProducto);
+
+                    int resultado = ps.executeUpdate();
+
+                    if (resultado > 0) {
+                        JOptionPane.showMessageDialog(null, "Producto eliminado exitosamente.");
+                        repuestosCargados();
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No se pudo eliminar el producto.");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error al eliminar el producto: " + e.getMessage());
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Por favor, selecciona un producto para eliminar.");
+        }
+    }
 
 
     /**
@@ -137,13 +161,18 @@ public class Menu_principal extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         mod = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         buscador.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buscadorActionPerformed(evt);
+            }
+        });
+        buscador.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                buscadorKeyReleased(evt);
             }
         });
 
@@ -200,13 +229,6 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Buscar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -222,9 +244,7 @@ public class Menu_principal extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton1))
+                                .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(bot_añadir)
                                 .addGap(18, 18, 18)
@@ -241,8 +261,7 @@ public class Menu_principal extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(jButton1))
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bot_añadir)
@@ -264,13 +283,27 @@ public class Menu_principal extends javax.swing.JFrame {
     }//GEN-LAST:event_buscadorActionPerformed
 
     private void bot_añadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bot_añadirActionPerformed
-        // TODO add your handling code here:
-        Pro a = new Pro();
-        a.setVisible(true);
+        Pro pr = new Pro(this);
+        pr.setVisible(true);
+        pr.modos(0);
     }//GEN-LAST:event_bot_añadirActionPerformed
 
     private void modActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modActionPerformed
-      
+        if(id.isEmpty()){
+            JOptionPane.showMessageDialog(null,"No seleccionó nada","Error",JOptionPane.ERROR_MESSAGE);
+        }
+        else{
+            Pro pr = new Pro(this);
+            String nombre = mm.getNombre();
+            String idp = mm.getId();
+            String marca = mm.getMarca();
+            String precio = mm.getPrecio();
+            int idM = mm.getId_marca();
+            pr.setVisible(true);
+            pr.modos(1);
+            pr.datos(idp, nombre, marca, idM, precio);
+            id = "";
+        }
     }//GEN-LAST:event_modActionPerformed
 
     private void tabla_repuestosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabla_repuestosKeyTyped
@@ -285,8 +318,20 @@ public class Menu_principal extends javax.swing.JFrame {
     }//GEN-LAST:event_tabla_repuestosMouseClicked
 
     private void imprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirActionPerformed
-        String id = mm.getId();
-        im.imprimir(id);
+ 
+        if(id.isEmpty()){
+            JOptionPane.showMessageDialog(null,"No seleccionó nada","Error",JOptionPane.ERROR_MESSAGE);
+        }
+        else{
+            int[] selectedRows = tabla_repuestos.getSelectedRows();
+            List<String> idsSeleccionados = new ArrayList<>();
+            for (int rowIndex : selectedRows) {
+                String id = tabla_repuestos.getValueAt(rowIndex, 0).toString();
+                idsSeleccionados.add(id);
+            }
+            imp.imprimirP(idsSeleccionados);
+            id = "";
+        }
     }//GEN-LAST:event_imprimirActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -294,80 +339,10 @@ public class Menu_principal extends javax.swing.JFrame {
         eliminarProducto();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-         String textoBusqueda = buscador.getText().trim(); // Suponiendo que tienes un JTextField llamado txt_buscador
-    if (!textoBusqueda.isEmpty()) {
-        DefaultTableModel model = buscarProductoPorNombreOMarca(textoBusqueda);
-        tabla_repuestos.setModel(model);
-    } else {
-        // Si el campo de búsqueda está vacío, puedes decidir si cargar todos los productos o mostrar un mensaje.
-        repuestosCargados(); // Esto volverá a cargar todos los productos
-    }
-        
-    }//GEN-LAST:event_jButton1ActionPerformed
-public DefaultTableModel buscarProductoPorNombreOMarca(String textoBusqueda) {
-    DefaultTableModel modeloTabla = new DefaultTableModel();
-    
-    // Definir las columnas del modelo de la tabla
-    modeloTabla.addColumn("Marca");
-    modeloTabla.addColumn("Nombre del Producto");
-    modeloTabla.addColumn("Precio");
-    modeloTabla.addColumn("Foto");
+    private void buscadorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscadorKeyReleased
+        buscarProducto(buscador.getText());
+    }//GEN-LAST:event_buscadorKeyReleased
 
-    // Comando SQL para buscar productos
-    String sql = "SELECT  m.nombre AS marca, p.nombre_producto, p.precio, p.foto " +
-                 "FROM productos p " +
-                 "JOIN marca m ON p.marca = m.id_marca " +
-                 "WHERE p.borrado = 1 AND (p.nombre_producto LIKE ? OR m.nombre LIKE ?)";
-
-    // Ejecutar la consulta SQL
-    try (Connection conn = conexion.conectar(); // Establece la conexión
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        
-        // Configurar los parámetros de la consulta
-        ps.setString(1, "%" + textoBusqueda + "%"); // Búsqueda por nombre del producto
-        ps.setString(2, "%" + textoBusqueda + "%"); // Búsqueda por nombre de la marca
-        
-        // Ejecutar la consulta y obtener resultados
-        ResultSet rs = ps.executeQuery();
-        
-        while (rs.next()) {
-            Object[] fila = new Object[4]; // Cambia a 4 ya que solo necesitas 4 columnas
-            
-            fila[0] = rs.getString("marca"); // Nombre de la marca
-            fila[1] = rs.getString("nombre_producto"); // Nombre del producto
-            fila[2] = rs.getBigDecimal("precio"); // Precio del producto
-            
-            // Convertir la imagen de la base de datos (blob) a ImageIcon
-            Blob blob = rs.getBlob("foto");
-            if (blob != null) {
-                byte[] data = blob.getBytes(1, (int) blob.length());
-                ImageIcon icon = new ImageIcon(data);
-                Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-                fila[3] = new ImageIcon(img); // Imagen
-            } else {
-                fila[3] = null; // Si no hay imagen, establece null
-            }
-            
-            modeloTabla.addRow(fila); // Agregar fila al modelo
-        }
-         tabla_repuestos.getColumnModel().getColumn(0).setPreferredWidth(200);
-        tabla_repuestos.getColumnModel().getColumn(1).setPreferredWidth(103);
-        tabla_repuestos.getColumnModel().getColumn(2).setPreferredWidth(100);
-       // tabla_repuestos.getColumnModel().getColumn(4).setPreferredWidth(100);
-        tabla_repuestos.getColumnModel().getColumn(3).setCellRenderer(new RenderImagen());
-
-        int fotoWidth = 200;
-        tabla_repuestos.getColumnModel().getColumn(3).setPreferredWidth(fotoWidth);
-        tabla_repuestos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        tabla_repuestos.setRowHeight(100);
-    } catch (SQLException e) {
-        e.printStackTrace(); // Manejo de errores
-    }
-    
-    return modeloTabla; // Retornar el modelo de la tabla
-}
 
 
     /**
@@ -409,7 +384,6 @@ public DefaultTableModel buscarProductoPorNombreOMarca(String textoBusqueda) {
     private javax.swing.JButton bot_añadir;
     private javax.swing.JTextField buscador;
     private javax.swing.JButton imprimir;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
