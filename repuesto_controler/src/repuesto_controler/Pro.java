@@ -116,7 +116,6 @@ public class Pro extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        añadir_marca = new javax.swing.JButton();
         añadir_foto = new javax.swing.JButton();
         marca_combo = new javax.swing.JComboBox<>();
         boton_subir = new javax.swing.JButton();
@@ -152,13 +151,7 @@ public class Pro extends javax.swing.JFrame {
 
         jLabel5.setText("Foto: ");
 
-        añadir_marca.setText("Añadir");
-        añadir_marca.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                añadir_marcaActionPerformed(evt);
-            }
-        });
-
+        añadir_foto.setBackground(new java.awt.Color(51, 255, 51));
         añadir_foto.setText("Añadir");
         añadir_foto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,7 +160,7 @@ public class Pro extends javax.swing.JFrame {
         });
 
         boton_subir.setBackground(new java.awt.Color(51, 255, 51));
-        boton_subir.setText("subir");
+        boton_subir.setText("Subir");
         boton_subir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 boton_subirActionPerformed(evt);
@@ -202,27 +195,24 @@ public class Pro extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(precioTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(foto, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))
-                        .addGap(38, 38, 38)
-                        .addComponent(añadir_foto))
+                                .addComponent(foto, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                                .addGap(38, 38, 38)
+                                .addComponent(añadir_foto))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addComponent(precioTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(nombreTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(15, 15, 15)
-                                .addComponent(marca_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(marca_ref)
-                                .addGap(18, 18, 18)
-                                .addComponent(añadir_marca)))))
+                            .addComponent(nombreTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(marca_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(marca_ref, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(33, 33, 33))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -248,7 +238,6 @@ public class Pro extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(añadir_marca)
                     .addComponent(marca_combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(marca_ref, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
@@ -280,12 +269,6 @@ public class Pro extends javax.swing.JFrame {
     }//GEN-LAST:event_nombreTXTActionPerformed
 
    
-    private void añadir_marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_marcaActionPerformed
-        Marca a= new Marca();
-        a.setVisible(true);
-        dispose();
-    }//GEN-LAST:event_añadir_marcaActionPerformed
-
     private void boton_subirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_subirActionPerformed
 
         String nombreProducto = nombreTXT.getText().trim();
@@ -340,14 +323,6 @@ public class Pro extends javax.swing.JFrame {
                         ps.setString(2, nombreProducto);
                         ps.setString(3,precioProducto);
                         ps.setString(4, id);
-                        /*ps.setBigDecimal(3, new BigDecimal(precioProducto));
-                        if (imagenBytes != null) {
-                            ps.setBytes(4, imagenBytes);
-                        } 
-                        else {
-                            ps.setNull(4, java.sql.Types.BLOB);
-                        }*/
-
                         int rowsInserted = ps.executeUpdate();
                         if (rowsInserted > 0) {
                             JOptionPane.showMessageDialog(null, "¡Se modificó el producto con exito!");
@@ -362,25 +337,19 @@ public class Pro extends javax.swing.JFrame {
             nombreTXT.setText("");
             precioTXT.setText("");
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "La imagen es muy pesada. Solo se aceptan imagenes de hasta 1 MB", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (NumberFormatException e) {
 
         }
-    
-  
     }//GEN-LAST:event_boton_subirActionPerformed
     
      
     private void añadir_fotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_fotoActionPerformed
-
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png");
         fileChooser.setFileFilter(filter);
 
-
         int result = fileChooser.showOpenDialog(this);
-
-
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             String rutaImagen = selectedFile.getAbsolutePath();
@@ -445,7 +414,6 @@ public class Pro extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton añadir_foto;
-    private javax.swing.JButton añadir_marca;
     private javax.swing.JButton boton_salir;
     private javax.swing.JButton boton_subir;
     private javax.swing.JLabel foto;

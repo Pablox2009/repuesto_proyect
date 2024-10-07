@@ -9,18 +9,12 @@ import Conexion.conexion;
 import codigo.Imprimir;
 import codigo.menuCode;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -161,8 +155,10 @@ public class Menu_principal extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         mod = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        boton_marca = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Menú Principal");
         setResizable(false);
 
         buscador.addActionListener(new java.awt.event.ActionListener() {
@@ -176,6 +172,7 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
 
+        bot_añadir.setBackground(new java.awt.Color(51, 255, 51));
         bot_añadir.setText("Añadir");
         bot_añadir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -206,6 +203,7 @@ public class Menu_principal extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tabla_repuestos);
 
+        imprimir.setBackground(new java.awt.Color(51, 255, 51));
         imprimir.setText("Imprimir");
         imprimir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -215,6 +213,7 @@ public class Menu_principal extends javax.swing.JFrame {
 
         jLabel1.setText("Buscar");
 
+        mod.setBackground(new java.awt.Color(255, 255, 102));
         mod.setText("Modificar");
         mod.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -222,10 +221,20 @@ public class Menu_principal extends javax.swing.JFrame {
             }
         });
 
+        jButton2.setBackground(new java.awt.Color(255, 51, 51));
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Eliminar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        boton_marca.setBackground(new java.awt.Color(51, 255, 51));
+        boton_marca.setText("Marcas");
+        boton_marca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boton_marcaActionPerformed(evt);
             }
         });
 
@@ -245,14 +254,17 @@ public class Menu_principal extends javax.swing.JFrame {
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(bot_añadir)
-                                .addGap(18, 18, 18)
-                                .addComponent(mod)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton2))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(bot_añadir)
+                        .addGap(18, 18, 18)
+                        .addComponent(mod)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(boton_marca)
+                        .addGap(83, 83, 83)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -266,7 +278,8 @@ public class Menu_principal extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bot_añadir)
                     .addComponent(mod)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(boton_marca))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(13, 13, 13)
@@ -318,7 +331,6 @@ public class Menu_principal extends javax.swing.JFrame {
     }//GEN-LAST:event_tabla_repuestosMouseClicked
 
     private void imprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imprimirActionPerformed
- 
         if(id.isEmpty()){
             JOptionPane.showMessageDialog(null,"No seleccionó nada","Error",JOptionPane.ERROR_MESSAGE);
         }
@@ -335,13 +347,17 @@ public class Menu_principal extends javax.swing.JFrame {
     }//GEN-LAST:event_imprimirActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
         eliminarProducto();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void buscadorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscadorKeyReleased
         buscarProducto(buscador.getText());
     }//GEN-LAST:event_buscadorKeyReleased
+
+    private void boton_marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_marcaActionPerformed
+        Marca ma = new Marca();
+        ma.setVisible(true);
+    }//GEN-LAST:event_boton_marcaActionPerformed
 
 
 
@@ -382,6 +398,7 @@ public class Menu_principal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bot_añadir;
+    private javax.swing.JButton boton_marca;
     private javax.swing.JTextField buscador;
     private javax.swing.JButton imprimir;
     private javax.swing.JButton jButton2;
